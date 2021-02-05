@@ -4,7 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import './style.css';
 
 const AppBar = () => {
-  const { pageTitle } = useSelector((state) => state);
+  const { pageTitle, form } = useSelector((state) => state);
   const match = useRouteMatch();
   const history = useHistory();
 
@@ -14,8 +14,13 @@ const AppBar = () => {
         <h1>{pageTitle}</h1>
       </div>
       <div className="actions">
-        {match.path === '/' && match.isExact
-        && <button type="button" onClick={() => history.push('/add')}>Add</button>}
+        {(match.path === '/' && match.isExact)
+          ? <button type="button" onClick={() => history.push('/add')}>Add</button>
+          : (
+            <>
+              <button type="button" onClick={() => form.handleSubmit()}>Save</button>
+            </>
+          )}
       </div>
     </div>
   );

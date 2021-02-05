@@ -1,9 +1,14 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { deleteUser } from '../../redux/user';
 import './style.css';
 
 const UsersList = () => {
   const { users } = useSelector((state) => state);
+  const history = useHistory();
+  const dispatch = useDispatch();
+
   return (
     <div className="users">
       <table className="users__list" cellPadding={10}>
@@ -26,8 +31,8 @@ const UsersList = () => {
               <td>{user.age}</td>
               <td>{user.gender}</td>
               <td>
-                <button type="button">Edit</button>
-                <button type="button">Remove</button>
+                <button type="button" onClick={() => history.push(`/edit/${user.id}`)}>Edit</button>
+                <button type="button" onClick={() => dispatch(deleteUser(user.id))}>Remove</button>
               </td>
             </tr>
           ))}
