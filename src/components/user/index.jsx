@@ -3,9 +3,17 @@ import { Field, Formik, Form } from 'formik';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
+import * as Yup from 'yup';
 import GENDERS from '../../GENDERS';
 import { setForm } from '../../redux/form';
 import { addUser, updateUser } from '../../redux/user';
+
+const userSchema = Yup.object().shape({
+  name: Yup.string().matches(/^[aA-zZ\s]+$/).max(25).required(),
+  age: Yup.number().min(1).max(95).required(),
+  address: Yup.string().matches(/^\w+(?:(?:,\s\w+)+|(?:\s\w+)+)*$/).max(100).required(),
+  email: Yup.string().email().required(),
+});
 
 const User = () => {
   const { id } = useParams();
@@ -24,6 +32,7 @@ const User = () => {
   return (
     <Formik
       innerRef={ref}
+      validationSchema={userSchema}
       initialValues={{
         email: currentUser?.email || '',
         name: currentUser?.name || '',
@@ -48,40 +57,67 @@ const User = () => {
         history.push('/');
       }}
     >
-      <Form>
-        <label htmlFor="name">Name</label>
-        <Field id="name" name="name" placeholder="Jane" />
+      {({ errors, touched }) => (
+        <Form>
+          <div>
+            <label htmlFor="name">Name</label>
+            <Field id="name" name="name" placeholder="Jane" />
+            {errors.name && touched.name ? (
+              <div>{errors.name}</div>
+            ) : null}
+          </div>
 
-        <label htmlFor="address">Address</label>
-        <Field id="address" name="address" placeholder="Sesame Street, 10" />
+          <div>
+            <label htmlFor="address">Address</label>
+            <Field id="address" name="address" placeholder="Sesame Street, 10" />
+            {errors.address && touched.address ? (
+              <div>{errors.address}</div>
+            ) : null}
+          </div>
 
-        <label htmlFor="email">Email</label>
-        <Field
-          id="email"
-          name="email"
-          placeholder="jane@acme.com"
-          type="email"
-        />
+          <div>
+            <label htmlFor="email">Email</label>
+            <Field
+              id="email"
+              name="email"
+              placeholder="jane@acme.com"
+              type="email"
+            />
+            {errors.email && touched.email ? (
+              <div>{errors.email}</div>
+            ) : null}
+          </div>
 
-        <label htmlFor="gender">Gender</label>
-        <Field as="select" id="gender" name="gender">
-          {GENDERS.map(
-            (gender) => (
-              <option
-                key={gender.id}
-                value={gender.description}
-              >
-                {gender.description}
-              </option>
-            ),
-          )}
-        </Field>
+          <div>
+            <label htmlFor="gender">Gender</label>
+            <Field as="select" id="gender" name="gender">
+              {GENDERS.map(
+                (gender) => (
+                  <option
+                    key={gender.id}
+                    value={gender.description}
+                  >
+                    {gender.description}
+                  </option>
+                ),
+              )}
+            </Field>
+            {errors.gender && touched.gender ? (
+              <div>{errors.gender}</div>
+            ) : null}
+          </div>
 
-        <label htmlFor="address">Age</label>
-        <Field id="age" name="age" placeholder="Sesame Street, 10" />
+          <div>
+            <label htmlFor="address">Age</label>
+            <Field id="age" name="age" placeholder="Sesame Street, 10" />
+            {errors.age && touched.age ? (
+              <div>{errors.age}</div>
+            ) : null}
+          </div>
 
-        <button type="submit">Submit</button>
-      </Form>
+          <button type="submit">Submit</button>
+        </Form>
+      )}
     </Formik>
   );
 };
